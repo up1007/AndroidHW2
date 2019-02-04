@@ -113,4 +113,40 @@ public class MainActivity2 extends AppCompatActivity {
             }
         }
     }
+    private class GetWeather extends AsyncTask<String,Void,String>{
+        @Override
+        protected String doInBackground(String... strings) {
+            String response;
+            try{
+                String address = strings[0];
+                HttpDataHandler http = new HttpDataHandler();
+                String url = String.format("https://api.darksky.net/forecast/53e80a669dc75ce56eeab42a033af526/%s,%s",lat,lng);
+                response = http.getHTTPData(url);
+                return response;
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String s) {
+            try{
+                JSONObject jsonObject = new JSONObject(s);
+
+                String sum = ((JSONArray)jsonObject.get("currently")).getJSONObject(0).get("summary").toString();
+                /*lng = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
+                        .getJSONObject("location").get("lng").toString();*/
+
+                //txtCoord.setText(String.format("Coordinates : %s / %s ",lat,lng));
+
+                /*if(dialog.isShowing())
+                    dialog.dismiss();*/
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
