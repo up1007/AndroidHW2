@@ -1,6 +1,8 @@
 package com.example.templocate;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -24,30 +26,13 @@ import org.json.JSONObject;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private static String cod = "map_location_id_42";
 
-    Button submitButton;
-    EditText userInput;
-    TextView outTest;
+    private static String coord[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
-
-        submitButton = (Button)findViewById(R.id.find_button);
-        userInput = (EditText)findViewById(R.id.user_address_text);
-        outTest = (TextView)findViewById(R.id.showCor);
-
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new GetCoordinates().execute(userInput.getText().toString().replace(" ","+"));
-            }
-        });
-
-        /*
-        //on launch
+        //on launch for maps
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -55,57 +40,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        */
     }
 
-    private class GetCoordinates extends AsyncTask<String,Void,String> {
-        ProgressDialog dialog = new ProgressDialog(MapsActivity.this);
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            dialog.setMessage("Please wait....");
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String response;
-            try{
-                String address = strings[0];
-                HttpHandler http = new HttpHandler();
-                String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=AIzaSyDSPHDU_sJ1Wn0gEDdbloWLtBizKcT_oSo",address);
-                response = http.getHttpData(url);
-                return response;
-            }
-            catch (Exception ex)
-            {
-
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            try{
-                JSONObject jsonObject = new JSONObject(s);
-
-                String lat = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
-                        .getJSONObject("location").get("lat").toString();
-                String lng = ((JSONArray)jsonObject.get("results")).getJSONObject(0).getJSONObject("geometry")
-                        .getJSONObject("location").get("lng").toString();
-
-               outTest.setText(String.format("Coordinates : %s / %s ",lat,lng));
-
-                if(dialog.isShowing())
-                    dialog.dismiss();
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -119,13 +56,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            // Add a marker in Sydney and move the camera
+        /*
+            LatLng sydney = new LatLng(-34, 151);
+            mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        */
+            coord = getIntent().getStringArrayExtra(cod);
 
-        LatLng sweden = new LatLng(60, 19);
-        mMap.addMarker(new MarkerOptions().position(sweden).title("Marker in Sweden"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sweden));
+            double lati, longi;
+            System.out.println(coord[0]+"l l"+coord[1]);
+            lati = Double.parseDouble(coord[0]);
+            longi = Double.parseDouble(coord[1]);
+            LatLng location = new LatLng(lati, longi);
+            mMap.addMarker(new MarkerOptions().position(location).title("Your Location"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+
     }
 }

@@ -23,12 +23,11 @@ public class HttpHandler {
             url = new URL(requestURL);
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(1500);
+            conn.setConnectTimeout(1500);
             conn.setDoInput(true);
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-            System.out.println("hi");
             int responseCode = conn.getResponseCode();
             if(responseCode == HttpsURLConnection.HTTP_OK)
             {
