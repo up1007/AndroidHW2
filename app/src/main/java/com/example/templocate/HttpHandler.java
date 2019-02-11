@@ -18,26 +18,30 @@ public class HttpHandler {
 
     public String getHttpData(String requestURL) {
         URL url;
-        String response = "";
-        try{
+        StringBuilder response = new StringBuilder();
+        try {
+
+            // Tyler driving now
             url = new URL(requestURL);
-            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
             conn.setRequestMethod("GET");
             conn.setReadTimeout(1500);
             conn.setConnectTimeout(1500);
             conn.setDoInput(true);
             conn.setDoOutput(true);
-            conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             int responseCode = conn.getResponseCode();
-            if(responseCode == HttpsURLConnection.HTTP_OK)
-            {
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
                 String line;
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                while((line = br.readLine()) != null)
-                    response+=line;
+                while ((line = br.readLine()) != null)
+                    response.append(line);
+                br.close();
+            } else {
+                response = new StringBuilder();
             }
-            else
-                response = "";
+
 
         } catch (ProtocolException e) {
             e.printStackTrace();
@@ -46,6 +50,8 @@ public class HttpHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return response;
+
+
+        return response.toString();
     }
 }

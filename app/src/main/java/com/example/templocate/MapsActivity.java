@@ -17,24 +17,29 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements GoogleMap.OnInfoWindowClickListener,
+        OnMapReadyCallback {
 
     private GoogleMap mMap;
     private static String cod = "map_location_id_42";
+    private static String code = "codeMe";
 
     private static String coord[];
+    private static String info = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //on launch for maps
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -56,21 +61,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-            // Add a marker in Sydney and move the camera
+        // Jacob driving now
+        // Add a marker in Sydney and move the camera
         /*
             LatLng sydney = new LatLng(-34, 151);
             mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         */
-            coord = getIntent().getStringArrayExtra(cod);
+        coord = getIntent().getStringArrayExtra(cod);
+        info = getIntent().getStringExtra(code);
 
-            double lati, longi;
-            System.out.println(coord[0]+"l l"+coord[1]);
-            lati = Double.parseDouble(coord[0]);
-            longi = Double.parseDouble(coord[1]);
-            LatLng location = new LatLng(lati, longi);
-            mMap.addMarker(new MarkerOptions().position(location).title("Your Location"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+        double lati, longi;
+        System.out.println(coord[0] + "l l" + coord[1]);
+        lati = Double.parseDouble(coord[0]);
+        longi = Double.parseDouble(coord[1]);
+        LatLng location = new LatLng(lati, longi);
+        mMap.addMarker(new MarkerOptions().position(location).title("Tap for Weather"));
 
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(mMap.getCameraPosition().zoom + 10.0f));
+
+        mMap.setOnInfoWindowClickListener(this);
+
+
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(this, info,
+                Toast.LENGTH_LONG).show();
     }
 }
